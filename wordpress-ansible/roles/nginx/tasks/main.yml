@@ -1,0 +1,36 @@
+---
+- name: Install NGINX
+  apt:
+    name: nginx
+    state: present
+
+- name: Start and enable NGINX
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Configure NGINX for WordPress
+  template:
+    src: wordpress.conf.j2
+    dest: /etc/nginx/sites-available/wordpress
+  notify: Reload NGINX
+
+- name: Enable site
+  file:
+    src: /etc/nginx/sites-available/wordpress
+    dest: /etc/nginx/sites-enabled/wordpress
+    state: link
+
+- name: Remove default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Allow HTTP and HTTPS through UFW
+  ufw:
+    rule: allow
+    name: "{{ item }}"
+  loop:
+    - 'Nginx Full'
+

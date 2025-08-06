@@ -1,0 +1,45 @@
+---
+- name: Install MariaDB
+  apt:
+    name: mariadb-server
+    state: present
+    update_cache: yes
+
+- name: Start and enable MariaDB
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+# Install Python module to allow Ansible to interact with MySQL
+- name: Install Python3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Install PyMySQL via pip3
+  pip:
+    name: PyMySQL
+    executable: pip3
+
+# Create WordPress database
+- name: Create WordPress database
+  mysql_db:
+    name: wordpress
+    state: present
+    login_user: admin_user
+    login_password: admin_pass
+
+# Create WordPress DB user
+- name: Create WordPress DB user
+  mysql_user:
+    name: wpuser
+    password: wp_password
+    priv: 'wordpress.*:ALL'
+    host: localhost
+    state: present
+    login_user: admin_user
+    login_password: admin_pass
+

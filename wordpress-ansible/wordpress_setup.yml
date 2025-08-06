@@ -1,0 +1,11 @@
+---
+- name: Install WordPress with NGINX, PHP, and MySQL
+  hosts: web
+  become: yes
+  roles:
+    - common
+    - php
+    - mysql
+    - nginx
+    - wordpress
+
